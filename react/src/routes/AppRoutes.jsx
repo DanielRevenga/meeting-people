@@ -2,13 +2,13 @@ import { Routes, Route, Navigate, createBrowserRouter } from "react-router-dom"
 import { MainNavBar } from "../components/layout/MainNavBar"
 import { Login } from "../screens/Login"
 import { SignUp } from "../screens/SignUp"
-import { Home } from "../screens/Home"
 import { useEffect } from "react"
 import { useAuthStore } from "../hooks"
 import { Chat } from "../screens/Chat"
 import { NotFound } from "../screens/NotFound"
 import { GuestLayout } from "../components/layout/GuestLayout"
 import { AuthLayout } from "../components/layout/AuthLayout"
+import { UserDashboard } from "../screens/UserDashboard"
 
 export const router = createBrowserRouter([
 	{
@@ -34,6 +34,10 @@ export const router = createBrowserRouter([
 		path: "/",
 		element: <AuthLayout />,
 		children: [
+			{
+				path: "/user-dashboard",
+				element: <UserDashboard />,
+			},
 			{
 				path: "/chat",
 				element: <Chat />,

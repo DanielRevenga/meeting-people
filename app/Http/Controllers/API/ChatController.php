@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,8 +12,6 @@ class ChatController extends Controller
    //
 
    public function __construct() {
-   $this->middleware("auth:api")->except(["show", "chatWith"]);
-   
    }
 
    public function show(Chat $chat) {
@@ -44,14 +43,34 @@ class ChatController extends Controller
       ]);
    }
 
-   public function chatWith(User $user) {
+   public function getMessages(Chat $chat) {
+      $messages = $chat->messages()->with("user")->orderBy("created_at")->get();
 
+      return response()->json([
+         "status" => true,
+         "message" => "Successfully retrieved messages",
+         "messages" => $messages,
+      ]);
 
-      // return response()->json([
-      //    "status" => true,
-      //    "message" => "Successfully retrieved chat",
-      //    "action" => $action,
-      //    "chat" => $chat,
-      // ]);
+   }
+
+   public function getUsers(Chat $chat) {
+      $users = $chat->users;
+
+      return response()->json([
+         "status" => true,
+         "message" => "Successfully retrieved users",
+         "users" => $users
+     ]);
+   }
+
+   public function getProfesionals() {
+      $users = User::where("role", "profesional")->get();
+
+      return response()->json([
+         "status" => true,
+         "message" => "Successfully retrieved profesionals",
+         "users" => $users
+       ]);
    }
 }

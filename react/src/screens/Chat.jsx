@@ -1,43 +1,96 @@
 //
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { chatAPI } from "../api"
 import { MessageBox } from "../components/general/MessageBox"
 import { formatDate } from "../helpers"
 import Echo from "laravel-echo"
 import Pusher from "pusher-js"
+import { useAuthStore } from "../hooks"
+import chatApi from "../api/chatApi"
 
 const chatId = 1
 let echo
 
 export const Chat = () => {
 	const [textMsg, setTextMsg] = useState("ddd")
-	const [messages, setMessages] = useState([
-		{
-			content: "Hola, que tal estás",
-			myMsg: true,
-			name: "Trajann",
-			createdAt: "2021-10-10 10:10",
-		},
-		{
-			content: "Bien, y tu?",
-			myMsg: false,
-			name: "Constantine",
-			createdAt: "2021-10-10 10:12",
-		},
-	])
-	// console.log(window.Echo)
-	console.log(window.Echo)
+	const [messages, setMessages] = useState([])
+	const [chatUsers, setChatUsers] = useState([])
+	const [chatOtherUser, setChatOtherUser] = useState(null)
+	const { user } = useAuthStore()
 
 	useEffect(() => {
-		if (window.Echo) {
-			window.Echo.join(`chat.1`).listen(".messagesent", (e) => {
-				console.log("BROADCAST")
-				console.log(e)
-				//  appendMessage(e.user.name, PERSON_IMG, "left", e.message.content);
-			})
-		}
+		const token = localStorage.getItem("access-token")
+		// Pusher.logToConsole = true
+		window.Pusher = Pusher
+
+		window.Echo = new Echo({
+			broadcaster: "pusher",
+			key: "LNMkOtgYL5sE0IM",
+			cluster: "mt1",
+			authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
+			auth: {
+				headers: { Authorization: "Bearer " + token },
+			},
+			// authEndpoint: "http://127.0.0.1:8000/api/login?email=trajann%40gmail.com&password=123456",
+			wsHost: "127.0.0.1",
+			wsPort: 6001,
+			forceTLS: false,
+			enabledTransports: ["ws"],
+			disableStats: true,
+		})
+		window.Echo.join(`chat.1`).listen(".messagesent", (e) => {
+			console.log("BROADCAST")
+			const { message } = e
+			const { content, created_at, user: eventUser } = message
+
+			if (eventUser.id !== user.id) {
+				setMessages([
+					...messages,
+					{
+						content,
+						myMsg: false,
+						name: eventUser.name,
+						createdAt: formatDate(created_at),
+					},
+				])
+			}
+			//  appendMessage(e.user.name, PERSON_IMG, "left", e.message.content);
+		})
 	}, [])
+
+	useEffect(() => {
+		chatApi
+			.get("/chat/1/get_users")
+			.then((response) => {
+				const { users } = response.data
+				if (users.length > 0) {
+					setChatOtherUser(users[0])
+					const anotherUser = users.filter((another) => another.id !== user.id)
+					setChatOtherUser(anotherUser[0])
+				}
+			})
+			.then(() => {
+				chatApi.get("/chat/1/get_messages").then(({ data }) => {
+					const { messages } = data
+					const chatMessages = messages.map(
+						({ content, user: chatUser, user_id, created_at }) => {
+							return {
+								content: content,
+								myMsg: user_id === user.id,
+								name: user_id === user.id ? user.name : chatUser.name,
+								createdAt: formatDate(created_at),
+							}
+						}
+					)
+					setMessages(chatMessages)
+				})
+			})
+	}, [])
+
+	useEffect(() => {
+		scrollToBottom()
+	}, [messages])
 
 	const submitMsgHandler = async (e) => {
 		e.preventDefault()
@@ -46,9 +99,10 @@ export const Chat = () => {
 			const { data } = await chatAPI.post("/messages", {
 				chat_id: 1,
 				content: textMsg,
-				user_id: 1,
+				// user_id: 2,
 			})
 			const { messageCreated } = data
+			console.log(data)
 			const { content, user, created_at } = messageCreated
 
 			setMessages([
@@ -63,17 +117,26 @@ export const Chat = () => {
 		} catch (error) {
 			console.log(error)
 		}
+		scrollToBottom()
+	}
+
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
 	}
 
 	const writeMsgHandler = (e) => {
 		setTextMsg(e.target.value)
 	}
 
+	const messagesEndRef = useRef(null)
+
+	if (messages.length === 0) return <div>Loading...</div>
+
 	return (
 		<section className="px-12 flex flex-col justify-between h-full md:px-[22vw]">
 			<main className="h-full">
 				<header className="mb-8 ml-1 flex justify-between">
-					<div>Hola</div>
+					<div>{chatOtherUser && chatOtherUser.name}</div>
 					<div>
 						<svg
 							width="24"
@@ -93,7 +156,7 @@ export const Chat = () => {
 				</header>
 				<div
 					id="chat-main-chat"
-					className="overflow-auto h-[80%] block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+					className="overflow-auto max-h-[60vh] h-[80%] block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
 				>
 					{messages.map(({ content, name, myMsg, createdAt }, index) => {
 						const color = myMsg ? "blue" : "green"
@@ -110,6 +173,7 @@ export const Chat = () => {
 							/>
 						)
 					})}
+					<div ref={messagesEndRef} />
 				</div>
 			</main>
 

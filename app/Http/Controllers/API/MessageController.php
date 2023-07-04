@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Events\MessageSent;
+use App\Http\Controllers\Controller;
 use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
@@ -51,19 +53,14 @@ class MessageController extends Controller
             "content" => "Unauthorized",
          ], 403);
       }
+      
 
       $message = auth()->user()->messages()->create([
          "chat_id" => $request->chat_id,
          "content" => $request->content,
       ])->load("user");
-         
-      $user = User::where("id", $request->user_id)->first();
-      $message = $user->messages()->create([
-         "chat_id" => $request->chat_id,
-         "content" => $request->content,
-      ])->load("user");
       
-      // broadcast(new MessageSent($message))->toOthers();
+      broadcast(new MessageSent($message))->toOthers();
 
       return response()->json([
          "status" => true,

@@ -13,13 +13,16 @@ const formFields = {
 
 export const SignUp = () => {
 	const { name, email, password, role, onInputChange } = useForm(formFields)
-	const { errorAuth, signupUser } = useAuthStore()
+	const { errorAuth, signupUser, successMessage } = useAuthStore()
 	const navigate = useNavigate()
 
 	const submitHandler = async (e) => {
 		e.preventDefault()
-
-		signupUser({ name, email, password, role })
+		try {
+			signupUser({ name, email, password, role })
+		} catch (error) {
+			console.log("ERROR!")
+		}
 		// navigate("/login")
 	}
 
@@ -83,6 +86,7 @@ export const SignUp = () => {
 								</select>
 							</div>
 							<div className="text-red-600 whitespace-pre-line">{errorAuth}</div>
+							<div className="text-green-600 whitespace-pre-line">{successMessage}</div>
 							<button
 								type="submit"
 								className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 bg-slate-700 hover:bg-slate-600 mt-[106px]"

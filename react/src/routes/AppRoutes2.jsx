@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom"
 import { MainNavBar } from "../components/layout/MainNavBar"
 import { Login } from "../screens/Login"
 import { SignUp } from "../screens/SignUp"
-import { Home } from "../screens/Home"
 import { useEffect } from "react"
 import { useAuthStore } from "../hooks"
 
@@ -32,8 +31,8 @@ export const AppRoutes = () => {
 							</>
 						) : (
 							<>
-								<Route exact path="/" element={<Home />} />
-								<Route path="/*" element={<Navigate to="/home" />} />
+								<Route exact path="/" element={<Chat />} />
+								<Route path="/*" element={<Navigate to="/chat" />} />
 							</>
 						)}
 					</Routes>

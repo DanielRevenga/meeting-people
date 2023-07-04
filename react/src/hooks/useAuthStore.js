@@ -7,7 +7,7 @@ export const useAuthStore = () => {
 	const dispatch = useDispatch()
 	const [errorAuth, setErrorAuth] = useState("")
 
-	const { isAuth } = useSelector((state) => state.auth)
+	const { isAuth, user, successMessage } = useSelector((state) => state.auth)
 
 	const loginUser = async ({ email, password }) => {
 		// dispatch(onLoading())
@@ -17,8 +17,12 @@ export const useAuthStore = () => {
 				email,
 				password,
 			})
+			const token = data.token
+			const user = data.user
+			localStorage.setItem("access-token", token)
+			localStorage.setItem("user", JSON.stringify(user))
 
-			dispatch(onLogin(data.user))
+			dispatch(onLogin({ user, token }))
 		} catch (error) {
 			setErrorAuth("Wrong credentials")
 			dispatch(onLogout("Wrong credentials"))
@@ -39,7 +43,6 @@ export const useAuthStore = () => {
 			dispatch(onSignup(data.user))
 		} catch (error) {
 			let message = error.response.data.message
-			console.log("error: ", message)
 			if (typeof message === "object" && Object.values(message).length) {
 				message = Object.values(message).join("\n")
 			}
@@ -51,6 +54,7 @@ export const useAuthStore = () => {
 
 	const logoutUser = async () => {
 		await chatAPI.post("/logout")
+		localStorage.setItem("access-token", "")
 		dispatch(onLogout(""))
 	}
 
@@ -59,7 +63,18 @@ export const useAuthStore = () => {
 			await chatAPI.get("/user")
 			dispatch(onLogin())
 		} catch (error) {
-			dispatch(onLogout())
+			dispatch(onLogout(""))
+		}
+	}
+
+	const checkAuthToken = async () => {
+		const token = localStorage.getItem("access-token")
+		const user = localStorage.getItem("user")
+		if (token && user) {
+			// await loginUser({ email: user.email, password: user.password })
+		} else {
+			localStorage.setItem("access-token", "")
+			dispatch(onLogout(""))
 		}
 	}
 
@@ -67,10 +82,13 @@ export const useAuthStore = () => {
 		// Properties
 		isAuth,
 		errorAuth,
+		successMessage,
+		user,
 		// Methods
 		loginUser,
 		signupUser,
 		logoutUser,
 		getUser,
+		checkAuthToken,
 	}
 }

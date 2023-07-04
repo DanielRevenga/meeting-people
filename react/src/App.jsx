@@ -1,32 +1,20 @@
-import { BrowserRouter } from "react-router-dom"
-import { AppRoutes } from "./routes/AppRoutes2"
-import { Provider } from "react-redux"
+import { useEffect } from "react"
+import { useAuthStore } from "./hooks"
 import { store } from "./store"
-import Echo from "laravel-echo"
-import Pusher from "pusher-js"
+import { router } from "./routes/AppRoutes"
+import { Provider } from "react-redux"
+import { RouterProvider } from "react-router-dom"
 
 export const App = () => {
-	// window.Pusher = Pusher
-	// Pusher.logToConsole = true
+	const { checkAuthToken } = useAuthStore()
 
-	// window.Echo = new Echo({
-	// 	broadcaster: "pusher",
-	// 	key: "LNMkOtgYL5sE0IM",
-	// 	cluster: "mt1",
-	// 	wsHost: "127.0.0.1",
-	// 	authEndpoint: "http://127.0.0.1/broadcasting/auth",
-	// 	wsPort: 6001,
-	// 	forceTLS: false,
-	// 	disableStats: true,
-	// })
+	useEffect(() => {
+		checkAuthToken()
+	}, [])
 
 	return (
-		<>
-			<Provider store={store}>
-				<BrowserRouter>
-					<AppRoutes />
-				</BrowserRouter>
-			</Provider>
-		</>
+		// <Provider store={store}>
+		<RouterProvider router={router} />
+		// </Provider>
 	)
 }

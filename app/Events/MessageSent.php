@@ -32,8 +32,7 @@ class MessageSent implements ShouldBroadcastNow
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
     public function broadcastOn() {
-        return new PresenceChannel("chat." . $this->message->chat_id)
-        ;
+        return new PresenceChannel("chat." . $this->message->chat_id);
     }
 
     public function broadcastAs() {
