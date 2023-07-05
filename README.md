@@ -2,7 +2,7 @@
 
 -  La aplicación es una prueba en la que se toca principalmente autenticación, control de estados, testing, componetización y websockets.
 
--  Se encuentra en desarrollo y le queda una actualización antes de ser realmente usable
+-  Hay tres Screens principales: Autenticación (login, signup), Dashboard (listado de usuarios para chatear) y Chat (chat privado)
 
 ## == TODO: Exponer planificación y razonamiento del proceso ==
 
