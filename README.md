@@ -8,7 +8,7 @@
 
 ## Requisitos hacer funcionar la aplicación - Laravel
 
--  Instalar PHP v8.2.4 ⇒ Una forma de hacerlo es a trabés del pack de Xampp: https://www.apachefriends.org/download.html
+-  Instalar PHP v8.2.4 ⇒ Una forma de hacerlo es a través del pack de Xampp: https://www.apachefriends.org/download.html
 
 -  Instalar Composer ⇒ https://getcomposer.org/download/
 
