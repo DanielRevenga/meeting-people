@@ -1,6 +1,6 @@
 //
 
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useAuthStore, useForm } from "../hooks"
 import { Input } from "../components/form/Input"
 
@@ -14,16 +14,14 @@ const formFields = {
 export const SignUp = () => {
 	const { name, email, password, role, onInputChange } = useForm(formFields)
 	const { errorAuth, signupUser, successMessage } = useAuthStore()
-	const navigate = useNavigate()
 
 	const submitHandler = async (e) => {
 		e.preventDefault()
 		try {
 			signupUser({ name, email, password, role })
 		} catch (error) {
-			console.log("ERROR!")
+			console.log(error)
 		}
-		// navigate("/login")
 	}
 
 	return (

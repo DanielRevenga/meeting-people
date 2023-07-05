@@ -23,16 +23,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::post("/login", [AuthController::class, 'login']);
 Route::post("/signup", [AuthController::class, 'signup']);
-Route::post("/logout", [AuthController::class, 'logout']);
+// Route::post("/logout", [AuthController::class, 'logout']);
 
 Route::middleware("auth:sanctum")->group(function () {
    Route::get("/user", [AuthController::class, "user"]);
    Route::post("/logout", [AuthController::class, 'logout']);
    
-   Route::get("/profesionals", [ChatController::class, "getProfesionals"]);
    Route::get("/chat/with/{user}", [ChatController::class, "getChatBetweenUsers"]);
-   Route::get("/chat/{chat}/get_users", [ChatController::class, "getUsers"]);
+   Route::get("/chat/{chat}/get_users", [ChatController::class, "getChatUsers"]);
    Route::get("/chat/{chat}/get_messages", [ChatController::class, "getMessages"]);
+   Route::get("/users", [ChatController::class, "getUsers"]);
 
    Route::post("/messages", [MessageController::class, "store"]);
    Route::get("/messages/{chat}", [MessageController::class, "getChatMessages"]);

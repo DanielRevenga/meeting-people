@@ -4,6 +4,7 @@ import { Login } from "../screens/Login"
 import { SignUp } from "../screens/SignUp"
 import { useEffect } from "react"
 import { useAuthStore } from "../hooks"
+import { Chat } from "../screens/Chat"
 
 export const AppRoutes = () => {
 	const { isAuth, getUser } = useAuthStore()
@@ -31,8 +32,8 @@ export const AppRoutes = () => {
 							</>
 						) : (
 							<>
-								<Route exact path="/" element={<Chat />} />
-								<Route path="/*" element={<Navigate to="/chat" />} />
+								<Route exact path="/chat/:id" element={<Chat />} />
+								<Route path="/*" element={<Navigate to="/user-dashboard" />} />
 							</>
 						)}
 					</Routes>

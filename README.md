@@ -32,7 +32,7 @@
 
 -  Inicia la app ⇒ “npm run dev”
 
-## Como apunte, para probar la aplicación rápidamente y ver su funcionamiento, recomiendo lo siguiente.
+## Para probar la aplicación rápidamente y ver su funcionamiento
 
 -  Ejecutar el servidor de Laravel, la api. En la raíz del proyecto ejecutando "php artisan serve" (no mediante Xampp)
 
@@ -40,10 +40,6 @@
 
 -  Ejecutar la parte front. En el fichero "react" ejecutando "npm run dev"
 
--  Registrar dos usuarios y loguearse en dos navegadores distintos o en el mismo en privado y en público.
+-  Registrar al menos par de usuarios, uno de tipo "Client" y otro de tipo "Professional" y loguearse en dos navegadores distintos o en el mismo en privado y en público.
 
--  Crear manualmente una sala de chat (importante que el ID sea 1, ya que es la que se usa en la demo por ahora por defecto)
-
--  En la tabla "chat_user", crear dos registros, uno para cada usuario, de manera que en cada registro el "chat_id" sea 1, y el "user_id" corresponda a cada usuario en su registro respectivo
-
--  Con todo esto, acceder con los usuarios logueados a la ruta .../chat de la app y empezar a chatear
+-  En el dashboard de cada usuario, iniciar chat con el otro usuario creado y empezar a chatear

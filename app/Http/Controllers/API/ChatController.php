@@ -54,7 +54,7 @@ class ChatController extends Controller
 
    }
 
-   public function getUsers(Chat $chat) {
+   public function getChatUsers(Chat $chat) {
       $users = $chat->users;
 
       return response()->json([
@@ -64,8 +64,8 @@ class ChatController extends Controller
      ]);
    }
 
-   public function getProfesionals() {
-      $users = User::where("role", "profesional")->get();
+   public function getUsers() {
+      $users = User::whereIn("role", ["user", "profesional"])->get();
 
       return response()->json([
          "status" => true,
